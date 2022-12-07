@@ -3,13 +3,20 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
-import java.security.cert.TrustAnchor;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +28,6 @@ import javax.swing.JTextArea;
 
 import javax.swing.BoxLayout;
 import javax.swing.JList;
-import javax.swing.JScrollBar;
 
 
 
@@ -66,7 +72,7 @@ public class Editeur {
 		
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		
 		JLabel lblRechercheMot = new JLabel("Recherche du mot");
 		lblRechercheMot.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -83,31 +89,58 @@ public class Editeur {
 		JScrollPane scrollPane = new JScrollPane();
 		panelCenter.add(scrollPane);
 		
+		JPanel panel_2 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		frame.getContentPane().add(panel_2, BorderLayout.SOUTH);
+		
+		JLabel lblURL = new JLabel("New label");
+		panel_2.add(lblURL);
+		
+		
+		
 		JTextArea txtrDansLePlancher = new JTextArea();
+		String fichier="shadock.txt";
+		String way=getClass().getClassLoader().getResource(fichier).getPath().replaceAll("^/","");
+		Path path=Paths.get(way);
+		String texteDroite="",texteGauche="";
+		try (BufferedReader r=Files.newBufferedReader(path,StandardCharsets.UTF_8)) {
+	        String line=null;
+	        try {
+		        while ((line=r.readLine())!=null) {
+		        	texteDroite+=line;
+		        	texteGauche+=line+"\n";
+		        }
+	        }
+	        finally {
+				r.close();
+			}
+	        /* Texte du label URL (si OK) */
+	        lblURL.setForeground(Color.black);
+			lblURL.setText(way);
+	    } 
+	    catch (NoSuchFileException e) {
+	    	/* Texte du label URL (si NOK) */
+	    	lblURL.setForeground(Color.red);
+			lblURL.setText("Fichier inconnu");
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		
+		
 		txtrDansLePlancher.setLineWrap(true);
 		txtrDansLePlancher.setWrapStyleWord(true);
-		String texteDroite = "Dans le plancher pour savoir si quelqu'un marchait et quel poids il faisait. Le cœur pouvait alors déterminer de quelle personne il s'agissait."
-				+ " Dans les murs, des cellules photosensibles, des micro-caméras et tout un réseau de détecteurs divers (magnétique, pression, infrarouge...) "
-				+ "permettait de déterminer la position exacte de chaque personne et objet dans la maison, de ventiler ou chauffer en conséquence, d'allumer ou d'éteindre la lumière..."
-				+ "David comprenait très bien où voulait en venir Prélude. Lorsqu’il l’avait créé, il détestait ce monde. "
-				+ "S’il avait eu la possibilité de le changer, il l’aurait certainement fait. Il l’aurait fait en pensé, mais pas en geste. "
-				+ "David n’était pas du genre méchant. Jamais il n’aurait fait de mal à qui que ce soit, mais il avait certainement mis cette idée dans la programmation de "
-				+ "Prélude sans le vouloir. Ce n’est pas une blague David, ton programme a réellement fonctionné et je suis là. » Dit Prélude. Et suivit une longue "
-				+ "explication de Prélude quant à son existence. Comment avait-il fait pour sortir de l’ordinateur de David pour s’installer sur Internet, et de ce fait "
-				+ "sur tous les ordinateurs reliés à Internet. Les explications continuèrent pendant une bonne heure. David laissait parler Prélude. "
-				+ "Personne n’intervenait. Tout le monde présent, généraux, informaticiens, simples gardes, tous étaient stupéfiaient. "
-				+ "Mais ils étaient beaucoup plus rapides et plus grands. Le peu de voitures qui circulaient encore étaient ultra sécurisées. "
-				+ "C'est pourquoi la vitesse maximum autorisée avait été portée à 230km/h. Les gens pouvaient commencer à travailler à l’aide de leur ordinateur "
-				+ "portables relié au réseau par leur téléphone mobile. Ils auraient pu travailler de chez eux, mais le contact humain restait une priorité. "
-				+ "Voir les collègues, prendre un café ensemble à midi et ce dire 'À demain'. Telle était la vie de l’homme 'moderne'. "
-				+ "Florence venait d’avouer quelque chose qu’elle n’osait même pas dire à la personne concernée : David. « Son » David. "
-				+ "Oui, elle l’aimait. Depuis qu’il avait emménagé à côté de chez elle, il y a de ça cinq ans. "
-				+ "Depuis le premier regard, elle savait que c’était lui. Et à chaque fois la même chose : dès qu’elle parlait de lui, dès qu’elle pensait à lui, ses yeux brillaient.";
-		txtrDansLePlancher.setText(texteDroite);
+		txtrDansLePlancher.setText(texteGauche);
 		scrollPane.setViewportView(txtrDansLePlancher);
+		
+	
 		
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.WEST);
+		
+		
 		
 //		JList list_1 = new JList();
 		
@@ -122,7 +155,7 @@ public class Editeur {
 //		}
 		
 		
-		Pattern p = Pattern.compile("[a-z0-9A-ZàáâãäåçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ]*");
+		Pattern p = Pattern.compile("[a-z0-9A-ZàáâãäåçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ-]*");
 		Matcher m = p.matcher(texteDroite);
 		TreeSet<String> coucou = new TreeSet<>();
 		while ( m.find() ) {
@@ -152,6 +185,10 @@ public class Editeur {
 		panel_1.add(scrollPane_1);
 		scrollPane_1.setViewportView(list_1);
 		list_1.setLayoutOrientation(JList.VERTICAL);
+		
+		
+		
+		
 //		panel_1.add(list);
 		
 		
